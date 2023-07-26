@@ -13,8 +13,8 @@ This project is a custom shell implementation written in C. The shell provides a
 
 To compile and run the shell, follow these steps:
 
-1. Clone the repository: `git clone https://github.com/ok`
-2. Navigate to the project directory: `cd ok`
+1. Clone the repository: `git clone https://github.com/simple_shell`
+2. Navigate to the project directory: `cd simple_shell`
 3. Compile the source code: `gcc -Wall -pedantic -Werror -Wextra -std=gnu89 *.c -g -o shell`
 4. Run the shell: `./shell`
 
@@ -37,6 +37,3 @@ $ echo "Hello, World!"
 
 Contributions to this project are welcome. If you find any bugs or have suggestions for improvements, please open an issue or submit a pull request.
 
-## License
-
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT). See the `LICENSE` file for more information.
