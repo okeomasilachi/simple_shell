@@ -19,7 +19,7 @@ char *first(env_list *head, char *av)
 	while (cur != NULL)
 	{
 		len = _strlen(cur->NAME) + 2;
-		tok = malloc(len);
+		tok = malloc(sizeof(char) * len);
 		_strcat(tok, "$");
 		_strcat(tok, cur->NAME);
 		if (strstr(va, tok) != NULL)
@@ -37,6 +37,7 @@ char *first(env_list *head, char *av)
 				free(rem), free(new), free(tok);
 				return (va);
 			}
+			free(tok);
 		}
 		cur = cur->next;
 	}
@@ -100,7 +101,7 @@ char *second(okeoma *oki, char *av)
 char *replace(env_list *head, okeoma *oki, char *value)
 {
 	bool check;
-	char *sec = strdup(value);
+	char *sec = value;
 
 	check = checker(sec);
 	while (check == true)

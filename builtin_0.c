@@ -56,6 +56,7 @@ void exit_command(okeoma *oki)
 {
 	int i;
 	int isNumber = 1;
+	int satus;
 
 	if (oki->av[1] == NULL)
 	{
@@ -80,8 +81,9 @@ void exit_command(okeoma *oki)
 			oki->N, oki->c, oki->av[0], oki->av[1]);
 		else
 		{
-			exit(atoi(oki->av[1]));
+			satus = _atoi(oki->av[1]);
 			free_all(oki);
+			exit(satus);
 		}
 	}
 }

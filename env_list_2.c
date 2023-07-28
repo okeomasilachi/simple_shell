@@ -99,7 +99,7 @@ char *strbind(const char *name, const char *value)
 	strcpy(take, name);
 	strcat(take, "=");
 	strcat(take, value);
-	take[len + 2] = '\0';
+	take[len + 1] = '\0';
 
 	return (take);
 }

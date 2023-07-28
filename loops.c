@@ -1,6 +1,25 @@
 #include "shell.h"
 
 /**
+ * var_free - frees all char ** variables
+ * @oki: struct of type okeoma
+ *
+ * Return: void
+*/
+void var_free(okeoma *oki)
+{
+	int i;
+
+	for (i = 0; oki->av[i] != NULL; i++)
+		free(oki->av[i]);
+
+	for (i = 0; oki->command[i] != NULL; i++)
+		free(oki->command[i]);
+	free(oki->command);
+	free(oki->av);
+}
+
+/**
  * file_loop - shell interactive loop
  * @oki: struct of type okeoma
  * @n: buffer size for getline
@@ -13,15 +32,14 @@
 void file_loop(okeoma *oki, size_t n, ssize_t byte_r, char st, FILE *fd)
 {
 	st = isatty(STDIN_FILENO);
-	v byte_r;
-
-	while (true)
-	{
+	byte_r = 0;
+	do {
 		oki->c++;
 		while ((byte_r = getline(&oki->cmd, &n, fd)) != -1)
 		{
 			remov(oki->cmd);
 			line(oki->cmd);
+
 			if (empty(oki->cmd))
 			{
 				oki->c++;
@@ -32,15 +50,15 @@ void file_loop(okeoma *oki, size_t n, ssize_t byte_r, char st, FILE *fd)
 			if (*oki->cmd == '\n')
 				break;
 			B_exc(oki);
+			var_free(oki);
 			if (oki->it && !st)
 				continue;
-			if (/* !oki->it  */st)
+			if (!oki->it && st)
 				break;
 		}
-	}
-	free_all(oki);
-	putchar('\n');
+	} while (byte_r != -1);
 }
+
 
 /**
  * non_loop - shell interactive loop
@@ -54,10 +72,10 @@ void file_loop(okeoma *oki, size_t n, ssize_t byte_r, char st, FILE *fd)
 */
 void non_loop(okeoma *oki, size_t n, ssize_t byte_r, char st, FILE *fd)
 {
-	while (true)
-	{
-		st = !isatty(STDIN_FILENO);
-		while ((byte_r = getline(&oki->cmd, &n, fd)) != -1)
+	st = !isatty(STDIN_FILENO);
+	do {
+		byte_r = getline(&oki->cmd, &n, fd);
+		if (byte_r != -1)
 		{
 			remov(oki->cmd);
 			line(oki->cmd);
@@ -73,12 +91,10 @@ void non_loop(okeoma *oki, size_t n, ssize_t byte_r, char st, FILE *fd)
 				continue;
 			if (!oki->it && st)
 				break;
-			oki->c++;
 		}
-	}
-	free_all(oki);
-	putchar('\n');
+	} while (byte_r != -1);
 }
+
 
 /**
  * _loop - shell interactive loop
@@ -101,6 +117,11 @@ void _loop(int argc, okeoma *oki, size_t n, ssize_t byte_r, char st, FILE *fd)
 		if (argc == 1 && !st && !oki->it)
 			p(STO, "$ ");
 		byte_r = getline(&oki->cmd, &n, fd);
+		if (byte_r == -1)
+		{
+			putchar('\n');
+			break;
+		}
 		line(oki->cmd);
 		remov(oki->cmd);
 		if (empty(oki->cmd))
@@ -110,15 +131,11 @@ void _loop(int argc, okeoma *oki, size_t n, ssize_t byte_r, char st, FILE *fd)
 		}
 		if (*oki->cmd == '\n')
 			continue;
-		if (*oki->cmd == EOF)
-			break;
-		if (byte_r == -1)
-			break;
 		B_exc(oki);
+		var_free(oki);
 		if (!oki->it && !st)
 			continue;
 		if (oki->it && st)
 			break;
-		oki->c++;
 	}
 }
