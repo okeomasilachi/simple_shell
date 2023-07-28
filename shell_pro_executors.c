@@ -61,7 +61,6 @@ int execute_command(okeoma *oki)
 		oki->child_pid = fork();
 		if (oki->child_pid == -1)
 			perror("fork");
-
 		else if (oki->child_pid == 0)
 		{
 			envi = env_from_list(oki->head);
@@ -72,11 +71,12 @@ int execute_command(okeoma *oki)
 		else
 		{
 			waitpid(oki->child_pid, &oki->status, 0);
-			/* fr__(2, oki->ec, envi); */
+			if (oki->it)
+				fr__(1, envi);
+			else
+				fr__(2, oki->ec, envi);
 			if (WIFEXITED(oki->status))
-			{
 				return (WEXITSTATUS(oki->status));
-			}
 		}
 	}
 	return (-1);
@@ -90,30 +90,39 @@ int execute_command(okeoma *oki)
 */
 char *find_executable(okeoma *oki)
 {
-	char *fpath = NULL, *tok, *path = get_env(oki->head, "PATH");
-	int len;
-
-	v len;
+	char *path_env, *path_copy, *token, *exe_path;
+	size_t token_len, exec_name_len;
 
 	if (access(oki->av[0], X_OK) == 0)
-		return (oki->av[0]);
-
-	len = strlen(oki->av[0]);
-	tok = string(path, ":");
-	while (tok)
 	{
-		fpath = malloc(sizeof(char) * (strlen(tok) + 2 + len));
-		fpath[0] = '\0';
-		strcpy(fpath, tok);
-		strcat(fpath, "/");
-		strcat(fpath, oki->av[0]);
-		if (access(fpath, X_OK) == 0)
-		{
-			return (fpath);
-		}
-		tok = string(NULL, ":");
+		exe_path = oki->av[0];
+		return (exe_path);
 	}
-	free(fpath);
+	path_env = get_env(oki->head, "PATH");
+	path_copy = strdup(path_env);
+	token = string(path_copy, ":");
+	while (token)
+	{
+		token_len = strlen(token);
+		exec_name_len = strlen(oki->av[0]);
+		exe_path = (char *)malloc((token_len + exec_name_len + 2) * sizeof(char));
+		if (exe_path == NULL)
+		{
+			free(path_copy);
+			return (NULL);
+		}
+		strcpy(exe_path, token);
+		strcat(exe_path, "/");
+		strcat(exe_path, oki->av[0]);
+		if (access(exe_path, X_OK) == 0)
+		{
+			free(path_copy);
+			return (exe_path);
+		}
+		free(exe_path);
+		token = string(NULL, ":");
+	}
+	free(path_copy);
 	return (NULL);
 }
 
@@ -139,10 +148,10 @@ void B_exc(okeoma *oki)
 	oki->tok2 = str_tok(oki->cmd, "&&||");
 	while (oki->tok2 != NULL)
 	{
-		prs_2(oki);
+		oki->command = prs(oki->cmd, ";\t\n");
 		for (oki->i = 0; oki->command[oki->i] != NULL; oki->i++)
 		{
-			prs(oki, oki->command[oki->i]);
+			oki->av = prs(oki->command[oki->i], " \t\n\r");
 			if (oki->it)
 				oki->c++;
 			for (z = 0; oki->av[z] != NULL; z++)
@@ -172,13 +181,6 @@ FILE *file_handle(okeoma *oki, int argc, char **argv)
 {
 	FILE *file_d;
 
-	/**
-	 * if (argc > 2)
-	 * {
-	 *	p(STE, "%s: Usage: simple_shell [filename]\n", argv[0]);
-	 *	exit(98);
-	 * }
-	*/
 	if (argc > 1 && argv[1] != NULL)
 	{
 		file_d = fopen(argv[1], "r");
@@ -191,7 +193,6 @@ FILE *file_handle(okeoma *oki, int argc, char **argv)
 		p(STE, "%s: %d: cannot open %s: No such file\n",
 		argv[0], oki->c, argv[1]);
 		exit(2);
-
 	}
 	return (file_d);
 }

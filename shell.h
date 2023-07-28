@@ -23,7 +23,7 @@
 #define v (void)
 #define MAX_PATH 4096
 
-/* extern char **environ; */
+extern char **environ;
 
 /**
  * struct environ_list - struct to store the env in a linked list
@@ -165,13 +165,12 @@ int _isspace(int c);
 /* parser's */
 char *str_tok(char *str, const char *del);
 char *string(char *str, const char *del);
-void prs(okeoma *oki, char *coms);
-void prs_2(okeoma *oki);
+char **prs(char *cmd, char *dl);
 
 /* miscellaneous */
 void sig(int num);
 void line(char *cmd);
-void _in(okeoma *oki, char **argv, char **env);
+void _in(okeoma *oki, char **argv);
 void remov(char *str);
 void File(char *filename, okeoma *oki);
 
@@ -205,6 +204,7 @@ int find_set(char *str);
 int empty(const char *str);
 
 /* loops */
+void var_free(okeoma *oki);
 void file_loop(okeoma *oki, size_t n, ssize_t byte_r, char st, FILE *fd);
 void non_loop(okeoma *oki, size_t n, ssize_t byte_r, char st, FILE *fd);
 void _loop(int argc, okeoma *oki, size_t n, ssize_t byte_r, char st, FILE *fd);

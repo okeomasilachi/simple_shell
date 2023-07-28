@@ -8,19 +8,23 @@
 */
 void free_all(okeoma *oki)
 {
-	int i;
-
-	free_recursive(oki->pos);
+	if (oki->pos != NULL)
+		free_recursive(oki->pos);
 	free_list(oki->head);
 
-	for (i = 0; oki->av[i] != NULL; i++)
-		free(oki->av[i]);
+	var_free(oki);
+	if (oki->cmd)
+		free(oki->cmd);
+	if (oki->ok)
+		free(oki->ok);
+	if (oki->old)
+		free(oki->old);
+	if (oki->tok)
+		free(oki->tok);
+	if (oki->path)
+		free(oki->path);
 
-	for (i = 0; oki->command[i] != NULL; i++)
-		free(oki->command[i]);
-
-	fr__(5, oki->cmd, oki->command, oki->av,
-		oki->ok, oki->old, oki->tok2, oki->tok);
+	free(oki);
 }
 
 /**

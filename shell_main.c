@@ -18,11 +18,10 @@ void sig(int num)
  * _in - initialise members of struct of type okeoma
  * @oki: struct of type okeoma
  * @argv: argument vector
- * @env: environmental variable
  *
  * Return: Void
 */
-void _in(okeoma *oki, char **argv, char **env)
+void _in(okeoma *oki, char **argv)
 {
 	oki->mypid = getpid();
 	oki->cmd = NULL;
@@ -35,7 +34,7 @@ void _in(okeoma *oki, char **argv, char **env)
 	oki->N = argv[0];
 	oki->c = 0;
 	oki->i = 0;
-	oki->head = list_from_env(env);
+	oki->head = list_from_env(environ);
 }
 
 /**
@@ -104,33 +103,37 @@ void line(char *cmd)
  * main - entry point of the shell
  * @argc: argument count
  * @argv: argument vectors
- * @env: envronment variables
  *
  * Return: 0 on success
  * error: Non zero value is returned
 */
-int main(int argc, char **argv, char **env)
+int main(int argc, char **argv)
 {
 	okeoma *oki = malloc(sizeof(okeoma));
 	size_t n = 0;
 	ssize_t byte_r = 1;
 	char st = 0;
 	FILE *fd;
+	int sts;
 
 	signal(SIGINT, sig);
-	_in(oki, argv, env);
+	_in(oki, argv);
 	fd = file_handle(oki, argc, argv);
 	if (argc > 1)
+	{
 		file_loop(oki, n, byte_r, st, fd);
+		fclose(fd);
+	}
 	if (!isatty(STDIN_FILENO))
 	{
 		non_loop(oki, n, byte_r, st, fd);
-		return (0);
+		sts = oki->status;
+		free_all(oki);
+		exit(sts);
 	}
 	if (isatty(STDIN_FILENO) && argc == 1 && !oki->it)
 		_loop(argc, oki, n, byte_r, st, fd);
 
-	fclose(fd);
 	free_all(oki);
 	return (0);
 }
