@@ -135,15 +135,15 @@ char *find_executable(okeoma *oki)
 void B_exc(okeoma *oki)
 {
 	int z;
-	bool affirm;
+/* 	bool affirm; */
 
 	find_char(oki->cmd, '#');
-	affirm = alias_checker(oki->pos, oki->cmd);
+	/* affirm = alias_checker(oki->pos, oki->cmd);
 	while (affirm == true)
 	{
 		oki->cmd = command(oki->pos, oki->cmd);
 		affirm = alias_checker(oki->pos, oki->cmd);
-	}
+	} */
 	oki->y = find_set(oki->cmd);
 	oki->tok2 = str_tok(oki->cmd, "&&||");
 	while (oki->tok2 != NULL)
