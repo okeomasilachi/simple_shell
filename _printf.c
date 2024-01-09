@@ -1,4 +1,4 @@
-#include "main.h"
+#include "shell.h"
 
 /**
  * print_integer - prints integer
@@ -75,13 +75,13 @@ int _isspace(int c)
 
 
 /**
- * print - minature dprintf function
+ * _printf - minature dprintf function
  * @stream: stream to write to
  * @format: format to write
  *
  * Return: void
 */
-void print(int stream, const char *format, ...)
+void _printf(int stream, const char *format, ...)
 {
 	va_list args;
 

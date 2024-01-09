@@ -1,44 +1,42 @@
-#include "main.h"
+#include "shell.h"
 
 /**
- * sig - handler for the SIGINT signal
- * @num: signal to process
+ * sig - signal handler
+ * @num: signal number
  *
- * Return: void
-*/
+ * Return: Nothing
+ */
 void sig(int num)
 {
-	v num;
+	(void)num;
 
-	print(STO, "\n$ ");
+	_printf(STDOUT_FILENO, "\n$ ");
 	fflush(stdout);
 }
 
 /**
- * main - entry point of the shell
+ * main - main function
  * @argc: argument count
- * @argv: argument vectors
+ * @argv: argument variable
  *
  * Return: 0 on success
- * error: Non zero value is returned
-*/
+ */
 int main(int argc, char **argv)
 {
-	char **av = NULL, **colon = NULL, *command = NULL;
-	size_t n = 0, command_count = 0;
-	ssize_t byte_r = 1;
-	char st = 0;
+	char **agv = NULL, *cmd = NULL, **colon = NULL;
+	size_t n = 0, cmd_count = 0;
+	ssize_t bytes_read = 1;
+	char st;
 	int status = 0;
 
-	v status, v st, v byte_r, v n;
+	(void)status, (void)st, (void)bytes_read, (void)n;
 
 	signal(SIGINT, sig);
-	if (!isatty(STDIN_FILENO))
+	if (!isatty(STDIN_FILENO) && argc >= 1)
 	{
-		non_loop(av, command, command_count, stdin, status, argv, colon);
+		non_interactive(agv, cmd, cmd_count, stdin, status, argv, colon);
+		return (0);
 	}
-	if (isatty(STDIN_FILENO) && argc == 1)
-		_loop(argc, av, command, command_count, stdin, status, argv, colon);
-
 	return (0);
 }
+

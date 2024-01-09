@@ -1,14 +1,14 @@
-#include "main.h"
+#include "shell.h"
 
 /**
- * string - Breaks a string into a sequence of zero or more nonempty tokens
+ * _strtok - Breaks a string into a sequence of zero or more nonempty tokens
  * @str: The string to be parsed
- * @del: Set of bytes that delimit the tokens in the parsed string
+ * @delim: Set of bytes that delimit the tokens in the parsed string
  *
  * Return: Pointer to the next token,
  *		or NULL if there are no more tokens.
 */
-char *string(char *str, const char *del)
+char *_strtok(char *str, const char *delim)
 {
 	char *tok_st = NULL, *tok_ed = NULL;
 	static char *saved_str;
@@ -21,12 +21,12 @@ char *string(char *str, const char *del)
 
 	tok_st = saved_str;
 
-	while (*tok_st != '\0' && _strchr(del, *tok_st) != NULL)
+	while (*tok_st != '\0' && _strchr(delim, *tok_st) != NULL)
 		tok_st++;
 
 	tok_ed = tok_st;
 
-	while (*tok_ed != '\0' && _strchr(del, *tok_ed) == NULL)
+	while (*tok_ed != '\0' && _strchr(delim, *tok_ed) == NULL)
 		tok_ed++;
 
 	if (*tok_ed != '\0')
@@ -57,20 +57,20 @@ char **split_vector(char *cmd, char *dl)
 	if (cmd)
 	{
 		com_cpy = _strdup(cmd);
-		tok = string(cmd, dl);
+		tok = _strtok(cmd, dl);
 		while (tok)
 		{
 			cnt++;
-			tok = string(NULL, dl);
+			tok = _strtok(NULL, dl);
 		}
 		cnt++;
 		command = malloc(sizeof(char *) * (cnt + 1));
-		tok = string(com_cpy, dl);
+		tok = _strtok(com_cpy, dl);
 		while (tok)
 		{
 			command[count] = malloc(sizeof(char) * (_strlen(tok) + 1));
 			_strcpy(command[count], tok);
-			tok = string(NULL, dl);
+			tok = _strtok(NULL, dl);
 			count++;
 		}
 		free(tok);
@@ -86,21 +86,21 @@ char **split_vector(char *cmd, char *dl)
 }
 
 /**
- * arg_free - free's char **
- * @av: char **
+ * free_arg- free's char **
+ * @agv: char **
  * @colon: char **
  *
  * Return: void
 */
-void arg_free(char **av, char **colon)
+void free_arg(char **agv, char **colon)
 {
 	int i, j;
 
-	for (i = 0; av[i] != NULL; i++)
+	for (i = 0; agv[i] != NULL; i++)
 	{
-		free(av[i]);
+		free(agv[i]);
 	}
-	free(av);
+	free(agv);
 
 	for (j = 0; colon[j] != NULL; j++)
 	{

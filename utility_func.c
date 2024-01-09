@@ -1,11 +1,11 @@
-#include "main.h"
+#include "shell.h"
 
 /**
- * empty - checks if an address pointed to by a pointer is empty
- * @str: string to be checked
+ * empty - check if string is empty
+ * @str: string
  *
- * Return: 0 if empty else 1
-*/
+ * Return: 1 if empty, 0 if not
+ */
 int empty(const char *str)
 {
 	while (*str)
@@ -17,16 +17,16 @@ int empty(const char *str)
 	return (1);
 }
 
-
 /**
- * remov - removes all occurance of "\n\t"" in a string
- * @str: string to be processed
+ * remov - remove tabs and newlines
+ * @str: string
  *
- * Return: Void
-*/
+ * Return: Nothing
+ */
 void remov(char *str)
 {
 	int i, j;
+
 	char *src, *dst;
 
 	for (i = 0, j = 0; str[i] != '\0'; i++)
@@ -40,6 +40,7 @@ void remov(char *str)
 	str[j] = '\0';
 	src = str;
 	dst = str;
+
 	while (*src)
 	{
 		if (*src != '"')
@@ -53,12 +54,12 @@ void remov(char *str)
 }
 
 /**
- * line - funtions removes concurent white spaces from a string
- * @cmd: the string to be worked on
+ * rm_white_space - remove white space
+ * @cmd: command
  *
- * Return: void
-*/
-void line(char *cmd)
+ * Return: Nothing
+ */
+void rm_white_space(char *cmd)
 {
 	char *new;
 
@@ -67,7 +68,6 @@ void line(char *cmd)
 
 	while (*cmd != '\0' && _strchr(" \t\n", *cmd) == NULL)
 		cmd++;
-
 	new = cmd;
 	while (*cmd != '\0')
 	{
@@ -81,22 +81,22 @@ void line(char *cmd)
 		new++;
 	}
 	*new = '\0';
-
 }
 
 /**
- * handel_comment - searches for a chracter in string and return's
- * all characters before the speacified character
- * @dest: the string to be searched
+ * handle_comment - handle comment
+ * @dest: destination
  *
- * Return: Void
-*/
-void handel_comment(const char *dest)
+ * Return: Nothing
+ */
+void handle_comment(const char *dest)
 {
-	char *str_cpy = _strchr(dest, '#');
+	char *str_copy;
 
-	if (str_cpy != NULL)
+	str_copy = _strchr(dest, '#');
+
+	if (str_copy != NULL)
 	{
-		*str_cpy = '\0';
+		*str_copy = '\0';
 	}
 }
